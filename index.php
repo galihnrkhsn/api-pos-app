@@ -1,41 +1,52 @@
 <?php
-    // Izinkan akses dari frontend Vite (port 5173)
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-
-    // Jika method-nya OPTIONS (preflight), hentikan di sini
-    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-        http_response_code(200);
-        exit();
-    }
-
-    require_once 'db.php';
-
     header("Content-Type: application/json");
 
-    $method = $_SERVER['REQUEST_METHOD'];
-    $uri    = $_GET['r'] ?? '';
+    $script     = $_SERVER['SCRIPT_NAME'];
+    $req_uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-    switch ("$method $uri") {
-        case 'GET /products':
-            require 'routes/product_list.php';
-            break;
-        
-        case 'POST /products':
-            require 'routes/product_create.php';
-            break;
+    $request    = str_replace($script, '', $req_uri);
+    $method     = $_SERVER['REQUEST_METHOD'];
 
-        case 'PUT /products':
-            require 'routes/product_update.php';
-            break;
+    if ($request === '/login' && $method === 'POST') {
+        require_once './controllers/AuthController.php';
+        $data = json_decode(file_get_contents('php://input'), true);
 
-        case 'DELETE /products':
-            require 'routes/product_delete.php';
-            break;
+        $auth = new AuthController();
+        $response = $auth->login($data['username'], $data['password']);
 
-        default:
-            http_response_code(404);
-            echo json_encode(['error' => 'Route not Found']);
+        echo json_encode($response);
+        exit;
     }
+
+    if (preg_match("#^/products$#", $request)) {
+        require_once './controllers/ProductControllers.php';
+        $controller = new ProductControllers();
+
+        if ($method === 'GET') {
+            echo json_encode($controller->getAll());
+        } elseif ($method === 'POST') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            echo json_encode($controller->create($data));
+        }
+        exit;
+    }
+
+    if (preg_match("#^/products/(\d+)$#", $request, $matches)) {
+        require_once './controllers/ProductControllers.php';
+        $controller = new ProductControllers();
+        $id = (int)$matches[1];
+
+        if ($method === 'GET') {
+            echo json_encode($controller->getOne($id));
+        } elseif ($method === 'PUT') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            echo json_encode($controller->update($id, $data));
+        } elseif ($method === 'DELETE') {
+            echo json_encode($controller->delete($id));
+        }
+        exit;
+    }
+
+    http_response_code(404);
+    echo json_encode(['status' => 'error', 'message' => 'Route tidak ditemukan']);
 ?>
