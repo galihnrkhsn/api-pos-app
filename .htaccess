@@ -1,0 +1,10 @@
+# POS-APP/.htaccess
+
+# Blokir akses langsung ke folder sensitif
+RedirectMatch 403 ^/(config|controllers|models|helpers|routes)/
+
+# Blokir akses file PHP di luar public/
+<FilesMatch "\.(php)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
