@@ -1,8 +1,9 @@
 <?php
-    $host   = 'localhost';
-    $db     = 'pos-app';
-    $user   = 'root';
-    $pass   = '';
+    require_once __DIR__ . '/../helpers/env.php';
+    $host   = env('DB_HOST');
+    $db     = env('DB_NAME');
+    $user   = env('DB_USER');
+    $pass   = env('DB_PASS');
 
     try {
         $pdo = new PDO("mysql:host=$host; dbname=$db", $user, $pass);
@@ -12,4 +13,4 @@
     }
 
     
-?>
+?>  
