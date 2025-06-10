@@ -1,16 +1,21 @@
 <?php
-    require_once __DIR__ . '/../helpers/env.php';
-    $host   = env('DB_HOST');
-    $db     = env('DB_NAME');
-    $user   = env('DB_USER');
-    $pass   = env('DB_PASS');
+    class Database {
+        public static function connect() {
+            $host           = getenv('DB_HOST');
+            $dbname         = getenv('DB_NAME');
+            $username       = getenv('DB_USER');
+            $password       = getenv('DB_PASS');
+            $charset        = 'utf8mb4';
+            $dsn            = "mysql:host=$host;dbname=$dbname;charset=$charset";
 
-    try {
-        $pdo = new PDO("mysql:host=$host; dbname=$db", $user, $pass);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Connection Failed:" . $e->getMessage());
+            try {
+                return new PDO($dsn, $username, $password, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]);
+            } catch (PDOException $e) {
+                die(json_encode(['error' => $e->getMessage()]));
+            }
+        }
     }
-
-    
-?>  
+?>

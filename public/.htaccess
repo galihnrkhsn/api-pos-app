@@ -1,11 +1,6 @@
-# public/.htaccess
-
-RewriteEngine On
-
-# Jika file atau folder tidak ditemukan, arahkan ke index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
-
-# Optional: Aktifkan CORS jika diperlukan
-# Header set Access-Control-Allow-Origin "*"
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>

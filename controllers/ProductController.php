@@ -1,11 +1,20 @@
 <?php
+    require_once __DIR__ .  '/../models/Product.php';
+
     class ProductController {
         public function index() {
-            $products = [
-                ['id' => 1, 'name' => 'Produk A', 'price' => 100000],
-                ['id' => 2, 'name' => 'Produk B', 'price' => 200000],
-            ];
-            echo json_encode($products);
+            $productModel   = new Product();
+            $products       = $productModel->getAll();
+            
+            echo json_encode([
+                'status' => 'success',
+                'data' => $products
+            ]);
         }
+
+        // public function store() {
+        //     $input = json_decode(file_get_contents("php://input"), true);
+        //     $input =
+        // }
     }
 ?>
