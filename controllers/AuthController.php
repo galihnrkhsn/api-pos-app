@@ -60,7 +60,7 @@
 
         public function logout() {
             session_destroy();
-            echo json_encode(['message' => 'Logou   t Successfully']);
+            echo json_encode(['message' => 'Logout Successfully']);
         }
     }
 ?>

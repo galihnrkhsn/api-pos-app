@@ -16,6 +16,7 @@
 
 
     switch(true) {
+        // PRODUCTS
         case $method === 'GET' && $uri === '/products':
             requireAuth();
             (new ProductController())->index();
@@ -25,6 +26,8 @@
             requireAuth();
             (new ProductController())->store();
             break;
+
+        // CATEGORIES
 
         case $method === 'GET' && $uri === '/categories':
             requireAuth();
@@ -36,6 +39,8 @@
             (new CategoryController())->store();
             break;
 
+        // TRANSACTIONS
+
         case $method === 'GET' && $uri === '/transactions':
             requireAuth();
             (new TransactionController())->index();
@@ -46,6 +51,7 @@
             (new TransactionController())->store();
             break;
 
+        // AUTH
         case $method === 'POST' && $uri === '/login':
             (new AuthController())->login();
             break;
