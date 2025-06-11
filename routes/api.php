@@ -21,10 +21,10 @@
             (new ProductController())->index();
             break;
         
-        // case $method === 'POST' && $uri === '/products':
-        //     requireAuth();
-        //     (new ProductController())->store();
-        //     break;
+        case $method === 'POST' && $uri === '/products':
+            requireAuth();
+            (new ProductController())->store();
+            break;
 
         case $method === 'GET' && $uri === '/categories':
             requireAuth();
