@@ -1,24 +1,87 @@
 <?php
+    require_once __DIR__ . '/../models/Transaction.php';
+
     class TransactionController{
         public function index() {
-            $transactions = [
-                ['id' => 1, 'name' => 'Produk A', 'price' => 100000],
-                ['id' => 2, 'name' => 'Produk B', 'price' => 200000],
-            ];
-            echo json_encode($transactions);
+            $transactionModel   = new Transaction();
+            $transactions       = $transactionModel->getAll();
+
+            echo json_encode([
+                'status' => 'success',
+                'data' => $transactions
+            ]);
         }
 
         public function store() {
             $input = json_decode(file_get_contents("php://input"), true);
-            if (!$input) {
+
+            $paymentType    = $input['payment_type'] ?? null;
+            $paidAmount     = $input['paid_amount'] ?? null;
+            $items          = $input['items'] ?? [];
+
+            $total          = 0;
+            foreach ($items as $item) {
+                $total += $item['price'] * $item['qty'];
+            }
+
+            if ($paidAmount < $total) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Invalid JSON']);
+                echo json_encode(['error' => 'Pembayaran Kurang!']);
                 return;
             }
 
+            if (!$input || !isset($paidAmount, $paymentType, $items)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Data tidak lengkap!']);
+                return;
+            }
+
+            $userId = $_SESSION['user_id'];
+
+            if (!$userId) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Login terlebih dahulu!']);
+                return;
+            }
+
+            $transactionModel   = new Transaction();
+            $transaction        = $transactionModel->create($userId, $paymentType, $paidAmount, $items);
+
+            if ($transaction) {
+                echo json_encode([
+                    'status' => "success",
+                    'message' => "Transacton stored",
+                    'data' => $transaction
+                ]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Failed to Store Transaction']);
+            }
+        }
+
+        public function show($transactionId) {
+            $transactionModel = new Transaction();
+            $transaction = $transactionModel->getById($transactionId);
+
+            if (!$transaction) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Transaction Not Found']);
+                return;
+            }
+
+            $items = $transactionModel->getItems($transactionId);
+
+            if (!$items) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Transaction Items Not Found']);
+                return;
+            }
+
+            $transaction['items'] = $items;
+
             echo json_encode([
-                'message' => 'success',
-                'data'  => $input
+                'status' => 'success',
+                'data' => $transaction
             ]);
         }
     }

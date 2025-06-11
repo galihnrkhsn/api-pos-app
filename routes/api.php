@@ -46,6 +46,12 @@
             (new TransactionController())->index();
             break;
 
+        case $method === 'GET' && preg_match('#^/transactions/(\d+)$#', $uri, $matches):
+            requireAuth();
+            $transactionId = $matches[1];
+            (new TransactionController())->show($transactionId);
+            break;
+
         case $method === 'POST' && $uri === '/transactions':
             requireAuth();
             (new TransactionController())->store();
