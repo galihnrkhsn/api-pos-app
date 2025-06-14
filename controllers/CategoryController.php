@@ -2,9 +2,14 @@
     require_once __DIR__ . '/../models/Category.php';
 
     class CategoryController {
+        private $categoryModel;
+
+        public function __construct() {
+            $this->categoryModel = new Transaction();
+        }
+
         public function index() {
-            $categoryModel  = new Category();
-            $category       = $categoryModel->getAll();
+            $category       = $this->categoryModel->getAll();
 
             echo json_encode([
                 'status' => 'success',

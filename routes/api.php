@@ -3,7 +3,9 @@
 
     require_once __DIR__ . '/../helpers/auth.php';
     require_once __DIR__ . '/../controllers/ProductController.php';
+    require_once __DIR__ . '/../controllers/ReportController.php';
     require_once __DIR__ . '/../controllers/AuthController.php';
+    require_once __DIR__ . '/../controllers/ExpenseController.php';
     require_once __DIR__ . '/../controllers/TransactionController.php';
     require_once __DIR__ . '/../controllers/CategoryController.php';
 
@@ -27,6 +29,11 @@
             (new ProductController())->store();
             break;
 
+        case $method === 'PUT' && $uri === '/products/update-stock':
+            requireAuth();
+            (new ProductController())->updateStock();
+            break;
+
         // CATEGORIES
 
         case $method === 'GET' && $uri === '/categories':
@@ -37,6 +44,18 @@
         case $method === 'POST' && $uri === '/categories':
             requireAuth();
             (new CategoryController())->store();
+            break;
+
+        // CATEGORIES
+
+        case $method === 'GET' && $uri === '/expenses':
+            requireAuth();
+            (new ExpenseController())->index();
+            break;
+        
+        case $method === 'POST' && $uri === '/expenses':
+            requireAuth();
+            (new ExpenseController())->store();
             break;
 
         // TRANSACTIONS
@@ -55,6 +74,12 @@
         case $method === 'POST' && $uri === '/transactions':
             requireAuth();
             (new TransactionController())->store();
+            break;
+
+        // REPORT
+        case $method === 'GET' && $uri === '/report':
+            requireAuth();
+            (new ReportController)->reportSalesSummary();
             break;
 
         // AUTH

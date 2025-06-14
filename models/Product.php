@@ -47,5 +47,16 @@
             $stmt = $this->db->prepare("INSERT INTO products (category_id, productName, barcode, price, stock) VALUES (?, ?, ?, ?, ?)");
             return $stmt->execute([$category_id, $productName, $barcode, $price, $stock]);
         }
+
+        public function updateStock($id, $stock) {
+            $stmt = $this->db->prepare("UPDATE products SET stock = ? WHERE productId = ?");
+            return $stmt->execute([$stock, $id]);
+        }
+
+        public function findById($id) {
+            $stmt = $this->db->prepare("SELECT productId FROM products WHERE productId = ?");
+            $stmt->execute([$id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
     }
 ?>

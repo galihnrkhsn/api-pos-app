@@ -2,9 +2,14 @@
     require_once __DIR__ . '/../models/Transaction.php';
 
     class TransactionController{
+        private $transactionModel;
+
+        public function __construct() {
+            $this->transactionModel = new Transaction();    
+        }
+
         public function index() {
-            $transactionModel   = new Transaction();
-            $transactions       = $transactionModel->getAll();
+            $transactions       = $this->transactionModel->getAll();
 
             echo json_encode([
                 'status' => 'success',
@@ -44,8 +49,7 @@
                 return;
             }
 
-            $transactionModel   = new Transaction();
-            $transaction        = $transactionModel->create($userId, $paymentType, $paidAmount, $items);
+            $transaction        = $this->transactionModel->create($userId, $paymentType, $paidAmount, $items);
 
             if ($transaction) {
                 echo json_encode([
@@ -68,7 +72,7 @@
                 echo json_encode(['error' => 'Transaction Not Found']);
                 return;
             }
-
+        
             $items = $transactionModel->getItems($transactionId);
 
             if (!$items) {

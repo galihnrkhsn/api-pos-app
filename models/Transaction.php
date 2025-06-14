@@ -46,20 +46,20 @@
                 }
 
                 $changeAmount   = $paidAmount - $totalPrice;
-
+                
                 $stmt           = $this->db->prepare("INSERT INTO transactions (user_id, invoice, totalPrice, paymentType, paidAmount, changeAmount)
                                                         VALUES (?,?,?,?,?,?)
                                                     ");
                 $stmt->execute([$userId, $invCode, $totalPrice, $paymentType, $paidAmount, $changeAmount]);
                 $transactionId  = $this->db->lastInsertId();
 
-                $stmtItem       = $this->db->prepare("INSERT INTO transaction_items (user_id, product_id, transaction_id, qty, price, totalPrice) 
-                                                        VALUES (?,?,?,?,?,?)
+                $stmtItem       = $this->db->prepare("INSERT INTO transaction_items (product_id, transaction_id, qty, price, totalPrice) 
+                                                        VALUES (?,?,?,?,?)
                                                     ");
                 foreach ($items as $item) {
                     $total      = $item['price'] * $item['qty'];
+                    
                     $stmtItem->execute([
-                        $userId,
                         $item['product_id'],
                         $transactionId,
                         $item['qty'],
