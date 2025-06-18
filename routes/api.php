@@ -16,7 +16,6 @@
     $uri            = '/' . trim(str_replace($scriptDir, '', $requestUri), '/');
     $method         = $_SERVER['REQUEST_METHOD'];
 
-
     switch(true) {
         // PRODUCTS
         case $method === 'GET' && $uri === '/products':
